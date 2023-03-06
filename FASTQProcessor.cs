@@ -5,38 +5,41 @@ namespace HGILearning
     public class FASTQProcessor
     {
         // Calculates the number of sequences in a FASTQ file
-        public static int NumberOfSequences(string filePath){
+        public static int NumberOfSequences(string filePath)
+        {
             int nonBlankLineCounter = 0;
 
-            if(File.Exists(filePath))
+            if (File.Exists(filePath))
             {
-                if(Path.GetExtension(filePath).Equals(".gz"))
+                if (Path.GetExtension(filePath).Equals(".gz"))
                 {
                     nonBlankLineCounter = CountSequencesInCompressedFile(filePath);
                 }
-                else{
+                else
+                {
                     nonBlankLineCounter = CountSequencesInTextFile(filePath);
-                }             
+                }
             }
             else throw new FileNotFoundException($"Could not find file at: {filePath}");
 
             // Division by 4 must only be done on a number that is not zero
-            if(nonBlankLineCounter > 0)
+            if (nonBlankLineCounter > 0)
                 return nonBlankLineCounter / 4;
             else
                 return 0;
         }
 
         // Count sequences in an uncompressed file format
-        private static int CountSequencesInTextFile(string filePath){
+        private static int CountSequencesInTextFile(string filePath)
+        {
             int nonBlankLineCounter = 0;
 
             // Read the file one line at a time
             // This helps with memory management
-            foreach(string line in File.ReadLines(filePath))
+            foreach (string line in File.ReadLines(filePath))
             {
                 // increase this count if the line found is not blank
-                if(!string.IsNullOrWhiteSpace(line))
+                if (!string.IsNullOrWhiteSpace(line))
                 {
                     nonBlankLineCounter++;
                 }
@@ -46,7 +49,8 @@ namespace HGILearning
         }
 
         // Count sequences in a compressed file format
-        private static int CountSequencesInCompressedFile(string filePath){
+        private static int CountSequencesInCompressedFile(string filePath)
+        {
             int nonBlankLineCounter = 0;
 
             using (Stream fileStream = File.OpenRead(filePath), zippedStream = new GZipStream(fileStream, CompressionMode.Decompress))
@@ -54,10 +58,10 @@ namespace HGILearning
                 using (StreamReader reader = new StreamReader(zippedStream))
                 {
                     // work with reader
-                    while(!reader.EndOfStream)
+                    while (!reader.EndOfStream)
                     {
                         string? line = reader.ReadLine();
-                        if(line != null && !string.IsNullOrWhiteSpace(line))
+                        if (line != null && !string.IsNullOrWhiteSpace(line))
                             nonBlankLineCounter++;
                     }
                 }
@@ -69,18 +73,20 @@ namespace HGILearning
 
 
         // Calculates the total number of nucleotides in a FASTQ file
-        public static int NumberOfNucleotides(string filePath){
-           int nucleotideCount = 0;
+        public static int NumberOfNucleotides(string filePath)
+        {
+            int nucleotideCount = 0;
 
-            if(File.Exists(filePath))
+            if (File.Exists(filePath))
             {
-                if(Path.GetExtension(filePath).Equals(".gz"))
+                if (Path.GetExtension(filePath).Equals(".gz"))
                 {
                     nucleotideCount = CountNucleotidesInCompressedFile(filePath);
                 }
-                else{
+                else
+                {
                     nucleotideCount = CountNucleotidesInPlainFile(filePath);
-                }             
+                }
             }
             else throw new FileNotFoundException($"Could not find file at: {filePath}");
 
@@ -94,14 +100,14 @@ namespace HGILearning
 
             // Read the file one line at a time
             // This helps with memory management
-            foreach(string line in File.ReadLines(filePath))
+            foreach (string line in File.ReadLines(filePath))
             {
-                if(!string.IsNullOrWhiteSpace(line) && newSequenceStarted)
+                if (!string.IsNullOrWhiteSpace(line) && newSequenceStarted)
                 {
                     nucleotideCount += line.Length; // add length of this nucleotide to the total count
                     newSequenceStarted = false;
                 }
-                if(IsSequenceFound(line))
+                if (IsSequenceFound(line))
                 {
                     newSequenceStarted = true;
                     continue;
@@ -112,7 +118,7 @@ namespace HGILearning
 
             return nucleotideCount;
         }
-        
+
         private static int CountNucleotidesInCompressedFile(string filePath)
         {
             bool newSequenceStarted = false; // flag to indicate if we have started reading a new sequence in the file
@@ -123,12 +129,12 @@ namespace HGILearning
                 using (StreamReader reader = new StreamReader(zippedStream))
                 {
                     // work with reader
-                    while(!reader.EndOfStream)
+                    while (!reader.EndOfStream)
                     {
                         string? line = reader.ReadLine();
-                        if(!string.IsNullOrWhiteSpace(line))
+                        if (!string.IsNullOrWhiteSpace(line))
                         {
-                            if(IsSequenceFound(line))
+                            if (IsSequenceFound(line))
                             {
                                 newSequenceStarted = true;
                                 continue;
@@ -136,7 +142,7 @@ namespace HGILearning
 
                             (nucleotideCount, newSequenceStarted) = ProcessNucleotideCount(newSequenceStarted, line, nucleotideCount);
 
-                            if(newSequenceStarted)
+                            if (newSequenceStarted)
                             {
                                 nucleotideCount += line.Length; // add length of this nucleotide to the total count
                                 newSequenceStarted = false;
@@ -149,14 +155,16 @@ namespace HGILearning
             return nucleotideCount;
         }
 
-        private static bool IsSequenceFound(string line){
-            if(line.StartsWith("@"))
+        private static bool IsSequenceFound(string line)
+        {
+            if (line.StartsWith("@"))
                 return true;
             else return false;
         }
 
-        private static Tuple<int,bool> ProcessNucleotideCount(bool newSequenceFound, string line, int counter){
-            if(newSequenceFound) 
+        private static Tuple<int, bool> ProcessNucleotideCount(bool newSequenceFound, string line, int counter)
+        {
+            if (newSequenceFound)
             {
                 counter += line.Length;
                 newSequenceFound = false;
@@ -164,6 +172,6 @@ namespace HGILearning
 
             return new Tuple<int, bool>(counter, newSequenceFound);
         }
-        
+
     }
 }

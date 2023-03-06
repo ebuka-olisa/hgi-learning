@@ -6,7 +6,8 @@
 
         static void Main(string[] args)
         {
-            if (args.Length != 2){
+            if(args.Length != 2)
+            {
                 Console.WriteLine("Please provide the necessary arguments in the format \"dotnet run -- <task-id> <file-path>\" ");
                 Console.WriteLine($"<task-id>: {Environment.NewLine}  '1' to get sequence count");
                 Console.WriteLine("  '2' to get nucleotide count");
@@ -14,15 +15,18 @@
                 return;
             }
 
-            try{
+            try
+            {
 
                 int taskId = Int32.Parse(args[0]);
                 string filePath = args[1];
 
-                switch(taskId){
+                switch (taskId)
+                {
                     // Get number of sequences
                     case (int)Operations.CountSequence:
                         Console.WriteLine(FASTQProcessor.NumberOfSequences(filePath));
+                        // Console.WriteLine(Directory.GetParent(Directory.GetCurrentDirectory()).Parent.FullName);
                         break;
                     // Get number of nucleotides
                     case (int)Operations.CountNucleotide:
@@ -36,13 +40,16 @@
 
                 }
             }
-            catch(FileNotFoundException ex){
+            catch (FileNotFoundException ex)
+            {
                 Console.WriteLine(ex.Message);
             }
-            catch(FormatException ex){
+            catch (FormatException ex)
+            {
                 Console.WriteLine($"First argument must be a number, please choose 1 or 2. Error message: {ex.Message}");
             }
-            catch(Exception ex){
+            catch (Exception ex)
+            {
                 Console.WriteLine(ex.Message);
             }
         }
