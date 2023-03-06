@@ -19,8 +19,8 @@ jobs:
       - name: Run linters
         uses: wearerequired/lint-action@v2
         with:
+          continue_on_error: false
           dotnet_format: true
-        continue_on_error: false
 
       - name: Install dependencies
         run: dotnet restore
