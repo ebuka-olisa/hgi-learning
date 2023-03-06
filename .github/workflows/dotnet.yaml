@@ -20,7 +20,7 @@ jobs:
         uses: wearerequired/lint-action@v2
         with:
           dotnet_format: true
-        continue-on-error: false
+        continue_on_error: false
 
       - name: Install dependencies
         run: dotnet restore
