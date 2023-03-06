@@ -6,7 +6,7 @@
 
         static void Main(string[] args)
         {
-            if(args.Length != 2)
+            if (args.Length != 2)
             {
                 Console.WriteLine("Please provide the necessary arguments in the format \"dotnet run -- <task-id> <file-path>\" ");
                 Console.WriteLine($"<task-id>: {Environment.NewLine}  '1' to get sequence count");
